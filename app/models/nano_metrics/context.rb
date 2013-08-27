@@ -4,6 +4,11 @@ class NanoMetrics::Context < ActiveRecord::Base
   has_many :metrics, class_name: 'NanoMetrics::Metric'
   belongs_to :metricable, polymorphic: true
 
+  validates :metricable, presence: true
+  validates :action,     presence: true, uniqueness: {
+    scope: [:metricable_id, :metricable_type]
+  }
+
   def self.find_or_create(action, metricable)
     for_action_and_metricable(action, metricable) || create(
       action:     action,
